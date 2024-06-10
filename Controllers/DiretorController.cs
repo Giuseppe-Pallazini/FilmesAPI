@@ -27,6 +27,37 @@ namespace apifilmes.Controllers
         }
 
 
+        
+        [HttpPost("filme")]
+        public Models.responses.DiretorPorFilmeNomeResponse SalvarPorFilmeNome(Models.Request.DiretorPorFilmeNome diretorReq)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            Models.TbFilme filme = ctx.TbFilmes.First(x => x.NmFilme == diretorReq.NmFilme);
+
+
+            Models.TbDiretor diretor = new Models.TbDiretor();
+            diretor.NmDiretor = diretorReq.NmDiretor;
+            diretor.DtNascimento = diretorReq.DtNascimento;
+            diretor.IdFilme = filme.IdFilme;
+
+
+            ctx.TbDiretors.Add(diretor);
+            ctx.SaveChanges();
+
+            Models.responses.DiretorPorFilmeNomeResponse resp = new Models.responses.DiretorPorFilmeNomeResponse();
+            resp.IdDiretor = diretor.IdDiretor;
+            resp.NmDiretor = diretor.NmDiretor;
+            resp.IdFilme = filme.IdFilme;
+            resp.NmFilme = filme.NmFilme;
+            resp.DtNascimento = diretor.DtNascimento;
+
+            return resp;
+
+
+            }
+
+
 
         [HttpGet]
         public List<Models.responses.DiretorResponse> Listar()

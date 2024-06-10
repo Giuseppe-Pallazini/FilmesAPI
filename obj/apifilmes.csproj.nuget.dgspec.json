@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj": {}
+    "c:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj": {}
   },
   "projects": {
-    "C:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj": {
+    "c:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj",
+        "projectUniqueName": "c:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj",
         "projectName": "apifilmes",
-        "projectPath": "C:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj",
+        "projectPath": "c:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\apifilmes.csproj",
         "packagesPath": "C:\\Users\\GIUSEPPE\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\obj\\",
+        "outputPath": "c:\\Users\\GIUSEPPE\\Documents\\C#\\FilmeAPI\\apifilmes\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\GIUSEPPE\\AppData\\Roaming\\NuGet\\NuGet.Config"
