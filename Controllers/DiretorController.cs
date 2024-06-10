@@ -29,14 +29,24 @@ namespace apifilmes.Controllers
 
 
         [HttpGet]
-        public List<Models.TbDiretor> Listar()
+        public List<Models.responses.DiretorResponse> Listar()
         {
             Models.ApiDbContext ctx = new Models.ApiDbContext();
 
             List<Models.TbDiretor> diretors = 
                 ctx.TbDiretors.Include(x => x.IdFilmeNavigation).ToList();
 
-            return diretors;
+            List<Models.responses.DiretorResponse> response =
+                diretors.Select(x => new Models.responses.DiretorResponse {
+                    IdDiretor = x.IdDiretor,
+                    IdFilme = x.IdFilme,
+                    Filme = x.IdFilmeNavigation.NmFilme,
+                    Diretor = x.NmDiretor,
+                    Genero = x.IdFilmeNavigation.DsGenero,
+                    Disponivel = x.IdFilmeNavigation.BtDisponivel
+                }).ToList();
+
+            return response;
         }
     }
 }
