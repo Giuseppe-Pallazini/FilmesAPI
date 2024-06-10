@@ -116,3 +116,6 @@ C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\zh-Hans\Micro
 C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\obj\Debug\net8.0\apifilmes.sourcelink.json
+C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\GIUSEPPE\Documents\C#\FilmeAPI\apifilmes\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
