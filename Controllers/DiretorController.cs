@@ -79,5 +79,34 @@ namespace apifilmes.Controllers
 
             return response;
         }
+
+
+
+        [HttpPut]
+        public void Alterar(Models.TbDiretor diretor)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            Models.TbDiretor atual = ctx.TbDiretors.First(x => x.IdDiretor == diretor.IdDiretor);
+            atual.NmDiretor = diretor.NmDiretor;
+            atual.DtNascimento = diretor.DtNascimento;
+            atual.IdFilme = diretor.IdFilme;
+
+            ctx.SaveChanges();
+
+        }
+
+
+
+        [HttpDelete]
+        public void Deletar(Models.TbDiretor diretor)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            Models.TbDiretor atual = ctx.TbDiretors.First(x => x.IdDiretor == diretor.IdDiretor);
+
+            ctx.Remove(atual);
+            ctx.SaveChanges();
+        }
     }
 }

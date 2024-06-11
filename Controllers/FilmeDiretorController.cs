@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace apifilmes.Controllers
 {
@@ -45,6 +47,40 @@ namespace apifilmes.Controllers
             return filme;
         }
 
-        
+
+
+
+
+        [HttpGet("consultar/diretor")]
+        public List<Models.TbDiretor> Consultar(string diretor, string genero)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbDiretor> diretores = ctx.TbDiretors
+                    //.Include(x => x.IdFilmeNavigation)
+                    .Where(x => x.NmDiretor.Contains(diretor) && x.IdFilmeNavigation.DsGenero.Contains(genero))
+                    .ToList();
+
+            return diretores;
+        }
+
+
+
+
+
+
+        [HttpGet("consultar/filmes")]
+        public List<Models.TbFilme> ConsultarFilmes(string genero, string diretor)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbFilme> filmes = ctx.TbFilmes
+                            .Include(x => x.TbDiretors)
+                            .Where(x => x.DsGenero == genero
+                                     && x.TbDiretors.All(d => d.NmDiretor.StartsWith(diretor)))
+                            .ToList();
+
+            return filmes;
+        }
     }
 }
