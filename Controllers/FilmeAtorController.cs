@@ -78,6 +78,41 @@ namespace apifilmes.Controllers
 
         }
 
+
+
+
+
+        [HttpPost("juntos")]
+        public void SalvarJunto(Models.Request.FilmeAtorJuntosRequest req)
+        {
+
+            Models.TbFilme filme = new Models.TbFilme();
+            filme.NmFilme = req.NmFIlme;
+            filme.DsGenero = req.DsGenero;
+            filme.NrDuracao = req.NrDuracao;
+            filme.VlAvaliacao = req.VlAvaliacao;
+            filme.BtDisponivel = req.BtDisponivel;
+            filme.DtLancamento = req.DtLancamento;
+            
+            filme.TbFilmeAtors =
+                req.Atores.Select(x => new Models.TbFilmeAtor()
+                {
+                    NmPersonagem = x.Personagem,
+                    IdAtorNavigation = new Models.TbAtor()
+                    {
+                        NmAtor = x.Ator,
+                        DtNascimento = x.Nascimento,
+                        VlAltura = x.Altura
+                    }
+                }).ToList();
+
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+            ctx.TbFilmes.Add(filme);
+            ctx.SaveChanges();
+
+        }
+
+
+
         }
     }
-}

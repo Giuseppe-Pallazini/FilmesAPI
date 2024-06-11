@@ -6,6 +6,6 @@ namespace apifilmes.Models.Request
     {
         public int IdFilme { get; set; }
 
-        public List<FilmeAtorItemRequest> Atores { get; set; }
+        public List<FilmeAtorItemRequest>? Atores { get; set; }
     }
 }
