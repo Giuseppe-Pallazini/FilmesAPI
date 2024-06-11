@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http.Connections;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace apifilmes.Controllers
 {
@@ -12,7 +13,7 @@ namespace apifilmes.Controllers
     [Route("[controller]")]
     public class FilmeAtorController : ControllerBase
     {
-        
+
         [HttpPost]
         public void Salvar(Models.Request.FilmeAtorRequest request)
         {
@@ -34,7 +35,7 @@ namespace apifilmes.Controllers
                 fa.NmPersonagem = item.Personagem;
                 fa.IdFilme = request.IdFilme;
                 fa.IdAtor = ator.IdAtor;
-                
+
                 ctx.TbFilmeAtors.Add(fa);
                 ctx.SaveChanges();
             }
@@ -93,7 +94,7 @@ namespace apifilmes.Controllers
             filme.VlAvaliacao = req.VlAvaliacao;
             filme.BtDisponivel = req.BtDisponivel;
             filme.DtLancamento = req.DtLancamento;
-            
+
             filme.TbFilmeAtors =
                 req.Atores.Select(x => new Models.TbFilmeAtor()
                 {
@@ -114,5 +115,45 @@ namespace apifilmes.Controllers
 
 
 
+
+        [HttpGet]
+        public List<Models.Responses.FilmeAtorResponse> Listar()
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbFilme> filmes = ctx.TbFilmes
+                                             .Include(x => x.TbFilmeAtors)
+                                             .ThenInclude(x => x.IdAtorNavigation)
+                                             .ToList();
+
+
+            List<Models.Responses.FilmeAtorResponse> response = 
+                filmes.Select(x => new Models.Responses.FilmeAtorResponse()
+                {
+                    Filme = new Models.Responses.FilmeAtorItemFilmeResponse()
+                    {
+                        Id = x.IdFilme,
+                        Filme = x.NmFilme,
+                        Genero = x.DsGenero,
+                        Avaliacao = x.VlAvaliacao,
+                        Duracao = x.NrDuracao,
+                        Disponivel = x.BtDisponivel,
+                        Lancamento = x.DtLancamento,
+
+                    },
+                    Atores = x.TbFilmeAtors.Select(f => new Models.Responses.FilmeAtorItemAtorResponse()
+                    {
+                        IdAtor = f.IdAtor,
+                        IdFilmeAtor = f.IdFilmeAtor,
+                        Ator = f.IdAtorNavigation.NmAtor,
+                        Personagem = f.NmPersonagem
+                    }).ToList()
+
+                }).ToList();
+        
+            return response;
         }
+
+
     }
+}
