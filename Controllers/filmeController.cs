@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using apifilmes.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace apifilmes.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("[controller]")]
     public class FilmeController : ControllerBase
     {
         
@@ -136,8 +137,54 @@ namespace apifilmes.Controllers
                 }).ToList();
 
             return response;
-
         }
+
+
+
+
+        [HttpPost("juntoemisturado")]
+        public Models.Responses.TestesResponse InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
+        {
+            Models.TbFilme filme = new Models.TbFilme();
+            filme.NmFilme = req.Filme;
+            filme.DsGenero = req.Genero;
+            filme.NrDuracao = req.Duracao;
+            filme.VlAvaliacao = req.Avaliacao;
+            filme.BtDisponivel = req.Disponivel;
+            filme.DtLancamento = req.Lancamento;
+
+            filme.TbDiretors = new List<TbDiretor>
+            {
+                new Models.TbDiretor
+                {
+                    NmDiretor = req.Diretor.Nome,
+                    DtNascimento = req.Diretor.Nascimento
+                }
+            };
+
+            filme.TbFilmeAtors =
+                req.Atores.Select(x => new Models.TbFilmeAtor()
+                {
+                    NmPersonagem = x.Personagem,
+                    IdAtorNavigation = new Models.TbAtor()
+                    {
+                        NmAtor = x.Ator,
+                        VlAltura = x.Altura,
+                        DtNascimento = x.Nascimento
+                    }
+                }).ToList();
+
+
+        Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+        ctx.TbFilmes.Add(filme);
+        ctx.SaveChanges();
+
+        Models.Responses.TestesResponse resp = new Models.Responses.TestesResponse();
+        resp.Resposta = $"Filme \"{req.Filme}\" Adicionado!";
+        return resp;
+        }
+
 
     }
 }
