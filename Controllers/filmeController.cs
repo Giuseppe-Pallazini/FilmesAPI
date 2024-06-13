@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace apifilmes.Controllers
 {
@@ -86,5 +87,57 @@ namespace apifilmes.Controllers
             ctx.TbFilmes.RemoveRange(filmes);
             ctx.SaveChanges();
         }
+
+
+
+
+        [HttpGet("testes/1")]
+        public List<Models.TbFilme> ListarTestes1()
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbFilme> filmes = ctx.TbFilmes
+                                             .Include(x => x.TbFilmeAtors)
+                                             .ThenInclude(x => x.IdAtorNavigation)
+                                             .ToList();
+
+
+            return filmes;
+        }
+
+
+
+        [HttpGet("testes/2")]
+        public List<Models.Responses.FilmeTestesResponse> ListarTestes2()
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbFilme> filmes = ctx.TbFilmes
+                                             .Include(x => x.TbFilmeAtors)
+                                             .ThenInclude(x => x.IdAtorNavigation)
+                                             .ToList();
+
+
+            List<Models.Responses.FilmeTestesResponse> response =
+                filmes.Select(x => new Models.Responses.FilmeTestesResponse()
+                {
+                    Filme = x.NmFilme,
+                    Genero = x.DsGenero,
+                    Duracao = x.NrDuracao,
+                    Disponivel = x.BtDisponivel,
+                    Personagens = x.TbFilmeAtors
+                              .Select(y => new Models.Responses.FilmeTestesAtorResponse()
+                              {
+                                Ator = y.IdAtorNavigation.NmAtor,
+                                Personagem = y.NmPersonagem,
+                                Nascimento = y.IdAtorNavigation.DtNascimento
+                              }).ToList()
+                    
+                }).ToList();
+
+            return response;
+
+        }
+
     }
 }
