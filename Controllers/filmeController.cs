@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using apifilmes.Models;
+using apifilmes.Utils;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,10 @@ namespace apifilmes.Controllers
     [Route("[controller]")]
     public class FilmeController : ControllerBase
     {
-        
+
+        database.FilmeDatabase filmeDB = new database.FilmeDatabase();
+
+
         [HttpPost]
         public Models.TbFilme Salvar(Models.TbFilme filme)
         {
@@ -151,37 +155,10 @@ namespace apifilmes.Controllers
         [HttpGet("testes/3")]
         public List<Models.Responses.FilmeTestesResponse> ListarTestes3(string genero, string personagem, string ator)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
+            List<Models.TbFilme> filmes = filmeDB.Consultar(genero, personagem, ator);
 
-            List<Models.TbFilme> filmes = ctx.TbFilmes
-                                             .Include(x => x.TbFilmeAtors)
-                                             .ThenInclude(x => x.IdAtorNavigation)
-                                             .Where(y => y.DsGenero == genero 
-                                                      && y.TbFilmeAtors.Any(a => a.NmPersonagem.Contains(personagem) 
-                                                                              && a.IdAtorNavigation.NmAtor.Contains(ator) ))
-                                             .ToList();
-
-            List<Models.Responses.FilmeTestesResponse> response =
-                filmes.Select(x => new Models.Responses.FilmeTestesResponse()
-                {
-                    Filme = new Models.Responses.FilmeAtorItemFilmeResponse()
-                    {
-                    Id = x.IdFilme,
-                    Filme = x.NmFilme,
-                    Genero = x.DsGenero,
-                    Duracao = x.NrDuracao,
-                    Avaliacao = x.VlAvaliacao,
-                    Disponivel = x.BtDisponivel,
-                    Lancamento = x.DtLancamento
-                },
-                    Personagens = x.TbFilmeAtors
-                                   .Select(y => new Models.Responses.FilmeTestesAtorResponse()
-                                {
-                                    Ator = y.IdAtorNavigation.NmAtor,
-                                    Personagem = y.NmPersonagem,
-                                    Nascimento = y.IdAtorNavigation.DtNascimento
-                                }).ToList()
-                }).ToList();
+            Utils.FilmeConverterResponse faConverter = new FilmeConverterResponse();
+            List<Models.Responses.FilmeTestesResponse> response = faConverter.Converter(filmes); 
 
             return response;
         }
