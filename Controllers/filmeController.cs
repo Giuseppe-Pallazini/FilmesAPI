@@ -118,22 +118,26 @@ namespace apifilmes.Controllers
                                              .ThenInclude(x => x.IdAtorNavigation)
                                              .ToList();
 
-
             List<Models.Responses.FilmeTestesResponse> response =
                 filmes.Select(x => new Models.Responses.FilmeTestesResponse()
                 {
+                    Filme = new Models.Responses.FilmeAtorItemFilmeResponse()
+                    {
+                    Id = x.IdFilme,
                     Filme = x.NmFilme,
                     Genero = x.DsGenero,
                     Duracao = x.NrDuracao,
+                    Avaliacao = x.VlAvaliacao,
                     Disponivel = x.BtDisponivel,
+                    Lancamento = x.DtLancamento
+                },
                     Personagens = x.TbFilmeAtors
-                              .Select(y => new Models.Responses.FilmeTestesAtorResponse()
-                              {
-                                Ator = y.IdAtorNavigation.NmAtor,
-                                Personagem = y.NmPersonagem,
-                                Nascimento = y.IdAtorNavigation.DtNascimento
-                              }).ToList()
-                    
+                                   .Select(y => new Models.Responses.FilmeTestesAtorResponse()
+                                {
+                                    Ator = y.IdAtorNavigation.NmAtor,
+                                    Personagem = y.NmPersonagem,
+                                    Nascimento = y.IdAtorNavigation.DtNascimento
+                                }).ToList()
                 }).ToList();
 
             return response;
@@ -181,7 +185,7 @@ namespace apifilmes.Controllers
         ctx.SaveChanges();
 
         Models.Responses.TestesResponse resp = new Models.Responses.TestesResponse();
-        resp.Resposta = $"Filme \"{req.Filme}\" Adicionado!";
+        resp.Resposta = "Filme Adicionado com sucesso!";
         return resp;
         }
 

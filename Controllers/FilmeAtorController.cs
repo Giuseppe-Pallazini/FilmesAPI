@@ -20,6 +20,8 @@ namespace apifilmes.Controllers
 
             Models.ApiDbContext ctx = new Models.ApiDbContext();
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             foreach (Models.Request.FilmeAtorItemRequest item in request.Atores)
             {
                 Models.TbAtor ator = new Models.TbAtor();

@@ -2,6 +2,6 @@ namespace apifilmes.Models.Responses
 {
     public class TestesResponse
     {
-        public string Resposta { get; set; }
+        public string? Resposta { get; set; }
     }
 }
