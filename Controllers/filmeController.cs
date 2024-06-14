@@ -26,6 +26,7 @@ namespace apifilmes.Controllers
         }
 
 
+
         [HttpGet]
         public List<Models.TbFilme> Listar()
         {
@@ -48,6 +49,7 @@ namespace apifilmes.Controllers
         }
 
 
+
         [HttpPut]
         public void Alterar(Models.TbFilme filme)
         {
@@ -65,6 +67,7 @@ namespace apifilmes.Controllers
         }
 
 
+
         [HttpDelete]
         public void Remover(Models.TbFilme filme)
         {
@@ -75,6 +78,7 @@ namespace apifilmes.Controllers
 
             ctx.SaveChanges();
         }
+
 
 
         [HttpDelete("genero")]
@@ -88,7 +92,6 @@ namespace apifilmes.Controllers
             ctx.TbFilmes.RemoveRange(filmes);
             ctx.SaveChanges();
         }
-
 
 
 
@@ -145,6 +148,45 @@ namespace apifilmes.Controllers
 
 
 
+        [HttpGet("testes/3")]
+        public List<Models.Responses.FilmeTestesResponse> ListarTestes3(string genero, string personagem, string ator)
+        {
+            Models.ApiDbContext ctx = new Models.ApiDbContext();
+
+            List<Models.TbFilme> filmes = ctx.TbFilmes
+                                             .Include(x => x.TbFilmeAtors)
+                                             .ThenInclude(x => x.IdAtorNavigation)
+                                             .Where(y => y.DsGenero == genero 
+                                                      && y.TbFilmeAtors.Any(a => a.NmPersonagem.Contains(personagem) 
+                                                                              && a.IdAtorNavigation.NmAtor.Contains(ator) ))
+                                             .ToList();
+
+            List<Models.Responses.FilmeTestesResponse> response =
+                filmes.Select(x => new Models.Responses.FilmeTestesResponse()
+                {
+                    Filme = new Models.Responses.FilmeAtorItemFilmeResponse()
+                    {
+                    Id = x.IdFilme,
+                    Filme = x.NmFilme,
+                    Genero = x.DsGenero,
+                    Duracao = x.NrDuracao,
+                    Avaliacao = x.VlAvaliacao,
+                    Disponivel = x.BtDisponivel,
+                    Lancamento = x.DtLancamento
+                },
+                    Personagens = x.TbFilmeAtors
+                                   .Select(y => new Models.Responses.FilmeTestesAtorResponse()
+                                {
+                                    Ator = y.IdAtorNavigation.NmAtor,
+                                    Personagem = y.NmPersonagem,
+                                    Nascimento = y.IdAtorNavigation.DtNascimento
+                                }).ToList()
+                }).ToList();
+
+            return response;
+        }
+
+
 
         [HttpPost("juntoemisturado")]
         public Models.Responses.TestesResponse InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
@@ -189,6 +231,9 @@ namespace apifilmes.Controllers
         return resp;
         }
 
+
+
+        
 
     }
 }
