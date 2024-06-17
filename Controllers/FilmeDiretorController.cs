@@ -15,22 +15,19 @@ namespace apifilmes.Controllers
     public class FilmeDiretorController : ControllerBase
     {
 
-
+        database.FilmeDatabase filmeDB = new database.FilmeDatabase();
+        Database.DiretorDatabase diretorDB = new Database.DiretorDatabase();
+        Database.FilmeAtorDatabase faDB = new Database.FilmeAtorDatabase();
 
 
         [HttpPost]
         public Models.Request.FilmeDiretorRequest Salvar(Models.Request.FilmeDiretorRequest request)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            ctx.TbFilmes.Add(request.Filme);
-            ctx.SaveChanges();
+            filmeDB.Salvar(request.Filme);
 
             request.Diretor.IdFilme = request.Filme.IdFilme;
 
-            ctx.TbDiretors.Add(request.Diretor);
-            ctx.SaveChanges();
-
+            diretorDB.Salvar(request.Diretor);
 
             return request;
         }
@@ -39,47 +36,24 @@ namespace apifilmes.Controllers
         [HttpPost("encadeado")]
         public Models.TbFilme SalvarEncadeado(Models.TbFilme filme)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            ctx.TbFilmes.Add(filme);
-            ctx.SaveChanges();
+            filmeDB.Salvar(filme);
 
             return filme;
         }
 
 
-
-
-
         [HttpGet("consultar/diretor")]
         public List<Models.TbDiretor> Consultar(string diretor, string genero)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            List<Models.TbDiretor> diretores = ctx.TbDiretors
-                    //.Include(x => x.IdFilmeNavigation)
-                    .Where(x => x.NmDiretor.Contains(diretor) && x.IdFilmeNavigation.DsGenero.Contains(genero))
-                    .ToList();
-
-            return diretores;
+            List<Models.TbDiretor> diretors = faDB.Consultar(diretor, genero);
+            return diretors;
         }
-
-
-
-
 
 
         [HttpGet("consultar/filmes")]
         public List<Models.TbFilme> ConsultarFilmes(string genero, string diretor)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            List<Models.TbFilme> filmes = ctx.TbFilmes
-                            .Include(x => x.TbDiretors)
-                            .Where(x => x.DsGenero == genero
-                                     && x.TbDiretors.All(d => d.NmDiretor.StartsWith(diretor)))
-                            .ToList();
-
+            List<Models.TbFilme> filmes = faDB.ConsultarFilmes(genero, diretor);
             return filmes;
         }
     }

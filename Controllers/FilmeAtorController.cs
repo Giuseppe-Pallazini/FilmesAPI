@@ -14,13 +14,15 @@ namespace apifilmes.Controllers
     public class FilmeAtorController : ControllerBase
     {
 
+        Database.AtorDatabase atorDB = new Database.AtorDatabase();
+        Database.FilmeAtorDatabase filmeAtorDB = new Database.FilmeAtorDatabase();
+        database.FilmeDatabase filmeDB = new database.FilmeDatabase();
+
+
         [HttpPost]
         public void Salvar(Models.Request.FilmeAtorRequest request)
         {
 
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
 
             foreach (Models.Request.FilmeAtorItemRequest item in request.Atores)
             {
@@ -29,8 +31,7 @@ namespace apifilmes.Controllers
                 ator.VlAltura = item.Altura;
                 ator.DtNascimento = item.Nascimento;
 
-                ctx.TbAtors.Add(ator);
-                ctx.SaveChanges();
+                atorDB.Salvar(ator);
 
 
                 Models.TbFilmeAtor fa = new Models.TbFilmeAtor();
@@ -38,22 +39,17 @@ namespace apifilmes.Controllers
                 fa.IdFilme = request.IdFilme;
                 fa.IdAtor = ator.IdAtor;
 
-                ctx.TbFilmeAtors.Add(fa);
-                ctx.SaveChanges();
+                filmeAtorDB.Salvar(fa);
             }
 
         }
 
 
-
         [HttpPost("encadeado")]
         public void SalvarEncadeado(List<Models.TbAtor> atores)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-            ctx.TbAtors.AddRange(atores);
-            ctx.SaveChanges();
+            filmeAtorDB.SalvarEncadeado(atores);
         }
-
 
 
         [HttpPost("mix")]
@@ -75,14 +71,8 @@ namespace apifilmes.Controllers
                     }
                 }).ToList();
 
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-            ctx.TbAtors.AddRange(atores);
-            ctx.SaveChanges();
-
+            filmeAtorDB.SalvarEncadeado(atores);
         }
-
-
-
 
 
         [HttpPost("juntos")]
@@ -109,25 +99,16 @@ namespace apifilmes.Controllers
                     }
                 }).ToList();
 
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-            ctx.TbFilmes.Add(filme);
-            ctx.SaveChanges();
 
+            filmeDB.Salvar(filme);
         }
-
-
 
 
         [HttpGet]
         public List<Models.Responses.FilmeAtorResponse> Listar()
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
 
-            List<Models.TbFilme> filmes = ctx.TbFilmes
-                                             .Include(x => x.TbFilmeAtors)
-                                             .ThenInclude(x => x.IdAtorNavigation)
-                                             .ToList();
-
+            List<Models.TbFilme> filmes = filmeAtorDB.Listar();
 
             List<Models.Responses.FilmeAtorResponse> response = 
                 filmes.Select(x => new Models.Responses.FilmeAtorResponse()

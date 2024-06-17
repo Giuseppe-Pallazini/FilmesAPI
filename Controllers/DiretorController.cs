@@ -13,17 +13,15 @@ namespace apifilmes.Controllers
     [Route("[controller]")]
     public class DiretorController : ControllerBase
     {
+        database.FilmeDatabase filmeDB = new database.FilmeDatabase();
 
-        
+        Database.DiretorDatabase diretorDB = new Database.DiretorDatabase();
+
         [HttpPost]
         public Models.TbDiretor Salvar(Models.TbDiretor diretor)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            ctx.TbDiretors.Add(diretor);
-            ctx.SaveChanges();
-
-            return diretor;
+            Models.TbDiretor resp = diretorDB.Salvar(diretor);
+            return resp;
         }
 
 
@@ -31,10 +29,7 @@ namespace apifilmes.Controllers
         [HttpPost("filme")]
         public Models.responses.DiretorPorFilmeNomeResponse SalvarPorFilmeNome(Models.Request.DiretorPorFilmeNome diretorReq)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            Models.TbFilme filme = ctx.TbFilmes.First(x => x.NmFilme == diretorReq.NmFilme);
-
+            Models.TbFilme filme = filmeDB.ConsultarPorNomeFilme(diretorReq.NmFilme);
 
             Models.TbDiretor diretor = new Models.TbDiretor();
             diretor.NmDiretor = diretorReq.NmDiretor;
@@ -42,8 +37,8 @@ namespace apifilmes.Controllers
             diretor.IdFilme = filme.IdFilme;
 
 
-            ctx.TbDiretors.Add(diretor);
-            ctx.SaveChanges();
+            diretorDB.Salvar(diretor);
+
 
             Models.responses.DiretorPorFilmeNomeResponse resp = new Models.responses.DiretorPorFilmeNomeResponse();
             resp.IdDiretor = diretor.IdDiretor;
@@ -53,8 +48,6 @@ namespace apifilmes.Controllers
             resp.DtNascimento = diretor.DtNascimento;
 
             return resp;
-
-
             }
 
 
@@ -62,10 +55,7 @@ namespace apifilmes.Controllers
         [HttpGet]
         public List<Models.responses.DiretorResponse> Listar()
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            List<Models.TbDiretor> diretors = 
-                ctx.TbDiretors.Include(x => x.IdFilmeNavigation).ToList();
+            List<Models.TbDiretor> diretors = diretorDB.Listar();
 
             List<Models.responses.DiretorResponse> response =
                 diretors.Select(x => new Models.responses.DiretorResponse {
@@ -81,32 +71,17 @@ namespace apifilmes.Controllers
         }
 
 
-
         [HttpPut]
         public void Alterar(Models.TbDiretor diretor)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            Models.TbDiretor atual = ctx.TbDiretors.First(x => x.IdDiretor == diretor.IdDiretor);
-            atual.NmDiretor = diretor.NmDiretor;
-            atual.DtNascimento = diretor.DtNascimento;
-            atual.IdFilme = diretor.IdFilme;
-
-            ctx.SaveChanges();
-
+            diretorDB.Alterar(diretor);
         }
-
 
 
         [HttpDelete]
         public void Deletar(Models.TbDiretor diretor)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            Models.TbDiretor atual = ctx.TbDiretors.First(x => x.IdDiretor == diretor.IdDiretor);
-
-            ctx.Remove(atual);
-            ctx.SaveChanges();
+            diretorDB.Deletar(diretor);
         }
     }
 }

@@ -12,15 +12,11 @@ namespace apifilmes.Controllers
     [Route("[Controller]")]
     public class atorController : ControllerBase
     {
-        
+        Database.AtorDatabase atorDB = new Database.AtorDatabase(); 
         public Models.TbAtor Salvar(Models.TbAtor ator)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-            
-            ctx.TbAtors.Add(ator);
-            ctx.SaveChanges();
-
-            return ator;
+            Models.TbAtor resp = atorDB.Salvar(ator);
+            return resp;
         }
     }
 }

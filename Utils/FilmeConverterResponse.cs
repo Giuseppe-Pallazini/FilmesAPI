@@ -9,6 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace apifilmes.Utils
 {
+
+
+    // Responsável por converter todas informações do modelo do BD para o modelo do Response
+
+
     public class FilmeConverterResponse
     {
         
@@ -38,6 +43,42 @@ namespace apifilmes.Utils
                 }).ToList();
 
                 return response;
+        }
+
+
+
+        public Models.TbFilme ConverterFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
+        {
+            Models.TbFilme filme = new Models.TbFilme();
+            filme.NmFilme = req.Filme;
+            filme.DsGenero = req.Genero;
+            filme.NrDuracao = req.Duracao;
+            filme.VlAvaliacao = req.Avaliacao;
+            filme.BtDisponivel = req.Disponivel;
+            filme.DtLancamento = req.Lancamento;
+
+            filme.TbDiretors = new List<TbDiretor>
+            {
+                new Models.TbDiretor
+                {
+                    NmDiretor = req.Diretor.Nome,
+                    DtNascimento = req.Diretor.Nascimento
+                }
+            };
+
+            filme.TbFilmeAtors =
+                req.Atores.Select(x => new Models.TbFilmeAtor()
+                {
+                    NmPersonagem = x.Personagem,
+                    IdAtorNavigation = new Models.TbAtor()
+                    {
+                        NmAtor = x.Ator,
+                        VlAltura = x.Altura,
+                        DtNascimento = x.Nascimento
+                    }
+                }).ToList();
+
+            return filme;
         }
     }
 }
