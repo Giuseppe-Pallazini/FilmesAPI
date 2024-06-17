@@ -17,16 +17,13 @@ namespace apifilmes.Controllers
 
         database.FilmeDatabase filmeDB = new database.FilmeDatabase();
 
+        Business.FilmeBusiness filmeBusiness = new Business.FilmeBusiness();
 
         [HttpPost]
         public Models.TbFilme Salvar(Models.TbFilme filme)
         {
-            Models.ApiDbContext ctx = new Models.ApiDbContext();
-
-            ctx.TbFilmes.Add(filme);
-            ctx.SaveChanges();
-
-            return filme;
+            Models.TbFilme f = filmeBusiness.Salvar(filme);
+            return f;
         }
 
 
