@@ -20,10 +20,19 @@ namespace apifilmes.Controllers
 
 
         [HttpPost]
-        public Models.TbFilme Salvar(Models.TbFilme filme)
+        public ActionResult<Models.TbFilme> Salvar(Models.TbFilme filme)
         {
-            Models.TbFilme f = filmeBusiness.Salvar(filme);
-            return f;
+            try
+            {
+                Models.TbFilme f = filmeBusiness.Salvar(filme);
+                return f;
+            }
+            catch (System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    new Models.Responses.ErrorResponse(ex, 400)
+                );
+            }
         }
 
 
@@ -83,24 +92,24 @@ namespace apifilmes.Controllers
         [HttpGet("testes/3")]
         public List<Models.Responses.FilmeTestesResponse> ListarTestes3(string genero, string personagem, string ator)
         {
-            List<Models.TbFilme> filmes = filmeDB.Consultar(genero, personagem, ator);
-
-            Utils.FilmeConverterResponse faConverter = new FilmeConverterResponse();
-            List<Models.Responses.FilmeTestesResponse> response = faConverter.Converter(filmes); 
-
-            return response;
+            List<Models.Responses.FilmeTestesResponse> filmes = filmeBusiness.Consultar(genero, personagem, ator);
+            return filmes;
         }
 
 
         [HttpPost("juntoemisturado")]
-        public void InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
+        public ActionResult<Models.TbFilme> InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
         {
-            filmeBusiness.InserirFilmeAtoresDiretor(req);
-
-            Utils.FilmeConverterResponse filmeConverter = new FilmeConverterResponse();
-            Models.TbFilme filme = filmeConverter.ConverterFilmeAtoresDiretor(req);
-
-            filmeDB.Salvar(filme);
+            try
+            {
+                return filmeBusiness.InserirFilmeAtoresDiretor(req);
+            }
+            catch (System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    new Models.Responses.ErrorResponse(ex, 400)
+                );
+            }
         }
 
 

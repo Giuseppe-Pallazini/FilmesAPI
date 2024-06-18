@@ -122,7 +122,7 @@ namespace apifilmes.Business
         }
 
     
-        public void InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
+        public Models.TbFilme InserirFilmeAtoresDiretor(Models.Request.FilmeAtorDiretorJuntoTestesRequest req)
         {
             Models.TbFilme filme = new TbFilme();
             filme.NmFilme = req.Filme;
@@ -143,7 +143,23 @@ namespace apifilmes.Business
 
 
             ValidacoesAtores(req.Atores);
+
+
+            Utils.FilmeConverterResponse filmeConverter = new Utils.FilmeConverterResponse();
+            Models.TbFilme filmeResp = filmeConverter.ConverterFilmeAtoresDiretor(req);
+
+            return filmeDB.Salvar(filmeResp);
         }
 
+
+        public List<Models.Responses.FilmeTestesResponse> Consultar(string genero, string personagem, string ator)
+        {
+            List<Models.TbFilme> filmes = filmeDB.Consultar(genero, personagem, ator); 
+
+            Utils.FilmeConverterResponse faConverter = new Utils.FilmeConverterResponse();
+            List<Models.Responses.FilmeTestesResponse> response = faConverter.Converter(filmes);
+
+            return response;
+        }
     }
 }
